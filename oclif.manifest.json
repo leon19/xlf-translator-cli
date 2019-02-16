@@ -1,0 +1,1 @@
+{"version":"0.0.0","commands":{"update":{"id":"update","description":"update the translation files","pluginName":"xlf-translator-cli","pluginType":"core","aliases":[],"flags":{"location":{"name":"location","type":"option","char":"l","description":"folder where translation files are located","required":true}},"args":[]}}}
