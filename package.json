@@ -54,7 +54,13 @@
   ],
   "homepage": "https://github.com/leon19/xlf-translator-cli",
   "keywords": [
-    "oclif"
+    "oclif",
+    "angular",
+    "i18n",
+    "translations",
+    "translaate",
+    "xliff",
+    "xlf"
   ],
   "license": "MIT",
   "main": "lib/index.js",
