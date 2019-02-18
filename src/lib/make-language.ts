@@ -1,17 +1,18 @@
+import Bluebird from 'bluebird'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 import {cloneDeep} from 'lodash'
 
 import formatUnit from './format-unit'
 import toTransUnitMap from './to-trans-unit-map'
-import {TransUnit, Xml} from './types'
+import {Xml} from './types'
 
 export default async function makeLanguage({locale, base, translation}: { locale: string; base: Xml; translation?: Xml }): Promise<Xml> {
   translation = translation || cloneDeep(base)
   const result = cloneDeep(base)
   const translations = toTransUnitMap(translation.xliff.file.body['trans-unit'])
 
-  const promises: Array<Promise<TransUnit>> = result.xliff.file.body['trans-unit'].map(async unit => {
+  result.xliff.file.body['trans-unit'] = await Bluebird.mapSeries(result.xliff.file.body['trans-unit'], async unit => {
     unit = formatUnit(unit)
 
     const translation = translations.get(unit._attributes.id)
@@ -51,8 +52,6 @@ export default async function makeLanguage({locale, base, translation}: { locale
 
     return unit
   })
-
-  result.xliff.file.body['trans-unit'] = await Promise.all(promises)
 
   return result
 }
