@@ -6,7 +6,6 @@ import ora from 'ora'
 import path from 'path'
 
 import glob from '../lib/glob'
-import isBaseMessageFile from '../lib/is-base-message-file'
 import localeFromFile from '../lib/locale-from-file'
 import makeLanguage from '../lib/make-language'
 import parseXmlFile from '../lib/parse-xml-file'
@@ -55,15 +54,18 @@ export default class Update extends Command {
     })
   }
 
-  private spinner = ora()
+  private readonly spinner = ora()
 
   async run() {
-    const translations = await this.getTranslations()
-    const baseFile = await this.getBaseFile(translations)
-
-    const translatableFiles = await glob(path.join(path.dirname(baseFile), '**/*.*.xlf'))
-
+    const baseFile = await this.getBaseFile()
+    const translatableFiles = await this.getTranslatableFiles(path.dirname(baseFile))
     const selectedFiles = await updatePrompt.selectFileToTranslate(translatableFiles)
+
+    if (!selectedFiles.length) {
+      this.spinner.info('no files selected')
+      this.exit(0)
+    }
+
     const baseMessages = await parseXmlFile(baseFile)
     const options = {concurrency: 10}
 
@@ -101,8 +103,25 @@ export default class Update extends Command {
     return super.finally(error)
   }
 
-  private async getBaseFile(translations: string[]): Promise<string> {
-    const baseFiles = translations.filter(isBaseMessageFile)
+  private async getTranslatableFiles(baseDir: string): Promise<string[]> {
+    const files = await glob(path.join(baseDir, '**/*.*.xlf'))
+
+    if (!files.length) {
+      this.error(new Error(`no translation files found in ${baseDir}`), {exit: updateExitCodes.noTranslationsFound})
+    }
+
+    return files
+  }
+
+  private async getBaseFile(): Promise<string> {
+    this.spinner.start('searching messages.xlf file...')
+
+    const location = this.getLocation()
+    const pattern = path.join(location, './**/messages.xlf')
+
+    const baseFiles = await glob(pattern)
+
+    this.spinner.stop()
 
     if (baseFiles.length === 0) {
       this.error(chalk.red(`messages.xlf file not found in ${this.getLocation()}`), {exit: updateExitCodes.noBaseTranslationFound})
@@ -115,19 +134,6 @@ export default class Update extends Command {
     }
 
     return baseFiles[0]
-  }
-
-  private async getTranslations(): Promise<string[]> {
-    this.spinner.start('searching messages.xlf file...')
-    const location = this.getLocation()
-
-    const pattern = path.join(location, './**/*.xlf')
-
-    const files = await glob(pattern)
-
-    this.spinner.stop()
-
-    return files
   }
 
   private getLocation() {

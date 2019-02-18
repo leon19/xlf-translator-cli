@@ -9,7 +9,7 @@ export default function localeFromFile(file: string): string {
   const match = name.match(/^messages\.(.+?)\.xlf/)
 
   if (!match) {
-    throw new Error('the given is not a translation file')
+    throw new Error(`${file} is not a translation file`)
   }
 
   return match[1]
