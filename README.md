@@ -21,7 +21,7 @@ $ npm install -g xlf-translator-cli
 $ xlf-translator COMMAND
 running command...
 $ xlf-translator (-v|--version|version)
-xlf-translator-cli/1.0.0 linux-x64 node-v11.4.0
+xlf-translator-cli/1.0.1 linux-x64 node-v11.4.0
 $ xlf-translator --help [COMMAND]
 USAGE
   $ xlf-translator COMMAND
@@ -66,5 +66,5 @@ DESCRIPTION
   It is expected to find a `messages.xlf` file and translations files following the format `messages.[locale].xlf`
 ```
 
-_See code: [src/commands/update.ts](https://github.com/leon19/xlf-translator-cli/blob/v1.0.0/src/commands/update.ts)_
+_See code: [src/commands/update.ts](https://github.com/leon19/xlf-translator-cli/blob/v1.0.1/src/commands/update.ts)_
 <!-- commandsstop -->

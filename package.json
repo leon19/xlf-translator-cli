@@ -1,7 +1,7 @@
 {
   "name": "xlf-translator-cli",
   "description": "Translate angular xliff xml translation files",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Lorens Leon @leon19",
   "bin": {
     "xlf-translator": "./bin/run"
